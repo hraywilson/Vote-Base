@@ -3,7 +3,7 @@ package voter_search
 import (
 	"sort"
 
-	"github.com/hraywilson/Vote-Base/config"
+	"github.com/hraywilson/Vote-Base/app/config"
 )
 
 // Do a binary search for the searchRec parameter

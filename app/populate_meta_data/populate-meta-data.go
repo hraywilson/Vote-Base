@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/hraywilson/Vote-Base/config"
+	"github.com/hraywilson/Vote-Base/app/config"
 )
 
 func PopulateCounty(voterSlice []*config.VoterDataRecord, countyName string) []*config.VoterDataRecord {

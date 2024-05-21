@@ -1,15 +1,15 @@
 FROM golang:latest as builder
 
 WORKDIR /app
-COPY ./app /app
+COPY go.mod go.sum ./app /app/
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o vote-app-base vote-app-base.go
 
 VOLUME /vote_data/
 
-# FROM scratch
+FROM scratch
 
-# COPY --from=builder /app /
+COPY --from=builder /app /
 
 EXPOSE 8080
 

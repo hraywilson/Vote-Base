@@ -9,10 +9,10 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hraywilson/Vote-Base/config"
-	"github.com/hraywilson/Vote-Base/load_data"
-	"github.com/hraywilson/Vote-Base/populate_meta_data"
-	"github.com/hraywilson/Vote-Base/voter_search"
+	"github.com/hraywilson/Vote-Base/app/config"
+	"github.com/hraywilson/Vote-Base/app/load_data"
+	"github.com/hraywilson/Vote-Base/app/populate_meta_data"
+	"github.com/hraywilson/Vote-Base/app/voter_search"
 )
 
 var voterBaseData = []*config.VoterDataRecord{}

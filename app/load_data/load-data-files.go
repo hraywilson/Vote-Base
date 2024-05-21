@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/hraywilson/Vote-Base/config"
+	"github.com/hraywilson/Vote-Base/app/config"
 )
 
 // ReadDataFile function expects a file name to read and process and
