@@ -1,0 +1,71 @@
+package populate_meta_data
+
+// type sliceHeader struct {
+// 	Length        int
+// 	Capacity      int
+// 	ZerothElement *byte
+// }
+import (
+	"fmt"
+	"log"
+	"sort"
+	"strings"
+
+	"github.com/hraywilson/Vote-Base/config"
+)
+
+func PopulateCounty(voterSlice []*config.VoterDataRecord, countyName string) []*config.VoterDataRecord {
+	//
+	countyToMatch := strings.ToUpper(countyName)
+	sliceOfCountyPtr := []*config.VoterDataRecord{}
+
+	for _, item := range voterSlice {
+		if strings.ToUpper(item.COUNTY) == countyToMatch {
+			sliceOfCountyPtr = append(sliceOfCountyPtr, item)
+		}
+	}
+
+	return sliceOfCountyPtr
+}
+
+func Make4BigDataSet(increaseBy int, sourceVoterSlice []*config.VoterDataRecord) []*config.VoterDataRecord {
+
+	// make a deep copy of sourceVoterSlice
+	destVoterSlice := make([]*config.VoterDataRecord, len(sourceVoterSlice)) //, len(sourceVoterSlice))
+	copy(destVoterSlice, sourceVoterSlice)
+
+	for ; increaseBy > 1; increaseBy-- {
+		sort.Slice(destVoterSlice, func(i, j int) bool {
+			return destVoterSlice[i].VOTER_ID < destVoterSlice[j].VOTER_ID
+		})
+		log.Println("BEFORE bigger slice len:", len(destVoterSlice))
+
+		for sourceIdx, sourceDat := range sourceVoterSlice {
+			fmt.Println("inserting", sourceIdx, sourceDat.VOTER_ID, sourceDat.FIRST_NAME, sourceDat.LAST_NAME)
+			//deep copy the souce by dereferencing the data to be added to destination
+			tempSlice := *sourceDat
+			tempSlice.LAST_NAME = tempSlice.LAST_NAME + "--<<<INSERTED" //////////temporary value for testing. DELETE ENTIRE LINE OF CODE
+			tempSlice.VOTER_ID++
+
+			for destIdx, destDat := range destVoterSlice {
+
+				if destIdx == len(destVoterSlice) {
+					destVoterSlice = append(destVoterSlice, &tempSlice)
+					break
+				} else if destIdx > 0 {
+					if sourceDat.VOTER_ID < destDat.VOTER_ID && sourceDat.VOTER_ID >= destVoterSlice[destIdx-1].VOTER_ID {
+						destVoterSlice = append(append(destVoterSlice[:destIdx], &tempSlice), destVoterSlice[destIdx:]...)
+						break
+					} else if sourceDat.VOTER_ID > destDat.VOTER_ID { //&& sourceDat.VOTER_ID >= destVoterSlice[destIdx-1].VOTER_ID {
+						destVoterSlice = append(append(destVoterSlice[destIdx:], &tempSlice), destVoterSlice[destIdx+1:]...)
+						break
+					} else {
+						destVoterSlice = append(destVoterSlice, &tempSlice)
+						break
+					}
+				}
+			}
+		}
+	}
+	return destVoterSlice
+}

@@ -1,0 +1,58 @@
+package populate_meta_data
+
+// type sliceHeader struct {
+// 	Length        int
+// 	Capacity      int
+// 	ZerothElement *byte
+// }
+import (
+	"fmt"
+	"sort"
+	"strings"
+
+	"github.com/hraywilson/Vote-Base/config"
+)
+
+func PopulateCounty(voterSlice []*config.VoterDataRecord, countyName string) []*config.VoterDataRecord {
+	//
+	countyToMatch := strings.ToUpper(countyName)
+	sliceOfCountyPtr := []*config.VoterDataRecord{}
+
+	for _, item := range voterSlice {
+		if strings.ToUpper(item.COUNTY) == countyToMatch {
+			sliceOfCountyPtr = append(sliceOfCountyPtr, item)
+		}
+	}
+
+	return sliceOfCountyPtr
+}
+
+func Make4BigDataSet(increaseBy int, sourceVoterSlice []*config.VoterDataRecord) []*config.VoterDataRecord {
+
+	destVoterSlice := make([]*config.VoterDataRecord, 0, len(sourceVoterSlice)*increaseBy)
+
+	fmt.Println("destination stats", len(destVoterSlice), cap(destVoterSlice))
+	// log.Println("BEFORE bigger slice len:", len(destVoterSlice))
+	for ; increaseBy >= 1; increaseBy-- {
+		// deep copy before appending to destVoterSlice
+		tempSlice := make([]*config.VoterDataRecord, len(sourceVoterSlice))
+		copy(tempSlice, sourceVoterSlice)
+		destVoterSlice = append(destVoterSlice, tempSlice...)
+		sort.Slice(destVoterSlice, func(i, j int) bool {
+			return destVoterSlice[i].VOTER_ID < destVoterSlice[j].VOTER_ID
+		})
+		fmt.Println("copyied source to dest", len(destVoterSlice), cap(destVoterSlice))
+
+		for idx, _ := range destVoterSlice {
+			if idx > 0 && destVoterSlice[idx].VOTER_ID == destVoterSlice[idx-1].VOTER_ID {
+				destVoterSlice[idx].VOTER_ID++
+			}
+		}
+		// log.Println("AFTER bigger slice len:", len(destVoterSlice))
+
+	}
+	for _, dat := range destVoterSlice {
+		fmt.Println(dat.VOTER_ID, dat.FIRST_NAME, dat.LAST_NAME)
+	}
+	return destVoterSlice
+}

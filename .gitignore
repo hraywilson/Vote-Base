@@ -1,0 +1,5 @@
+# ignore all data files
+./vote_data/*
+# ignore vscode stuff
+.vscode/
+Vote-Base.code-workspace
