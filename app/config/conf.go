@@ -1,7 +1,7 @@
 package config
 
-const BaseDataHost string = "horus.byrds:8080"
-const DataFilePath string = "../vote_data/"
+const BaseDataHost string = "0.0.0.0:8080"
+const DataFilePath string = "/vote_data/"
 
 // GetFileFormat expects the first 4 charaacters of a
 // filename to determine a canonicle file format of the

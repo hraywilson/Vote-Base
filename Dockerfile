@@ -1,17 +1,15 @@
 FROM golang:latest as builder
 
 WORKDIR /app
-COPY go.mod go.sum ./app /app/
+COPY app/*.go . ./
+RUN go mod download
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o vote-app-base vote-app-base.go
 
-VOLUME /vote_data/
-
 FROM scratch
 
-COPY --from=builder /app /
+COPY --from=builder /app/vote-app-base /
 
-EXPOSE 8080
+VOLUME /vote_data/
 
-CMD ["/app/vote-app-base"]
-# CMD ["/bin/bash"]
+CMD ["./vote-app-base"]

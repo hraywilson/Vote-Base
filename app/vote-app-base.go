@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin" // this module contains ByteDance
 	"github.com/hraywilson/Vote-Base/app/config"
 	"github.com/hraywilson/Vote-Base/app/load_data"
 	"github.com/hraywilson/Vote-Base/app/populate_meta_data"
@@ -83,19 +83,23 @@ func getVoterbyName(c *gin.Context) {
 // Load comma delimited data file passed on the url
 func loadDataFiles(c *gin.Context) {
 	inputFile := c.Param("filename")
-	c.JSON(http.StatusOK,
-		gin.H{"message": "input file name: " + inputFile})
 
 	// Load the data file and if records returned are not nil
 	// we'll append that data to the Base slice
 	log.Println("Loading data file:", inputFile)
-	sliceOfSourceData := load_data.ReadDataFile(inputFile)
-	log.Println("input file", inputFile, ": row count:", len(sliceOfSourceData))
+	sliceOfSourceData := load_data.ReadDataFile(config.DataFilePath, inputFile)
+	// log.Println("input file", inputFile, ": row count:", len(sliceOfSourceData))
 
 	if sliceOfSourceData != nil {
 		voterBaseData = append(voterBaseData, sliceOfSourceData...)
 	}
-	log.Printf("Length of Base voter Slice: %d\n", len(voterBaseData))
+
+	c.JSON(http.StatusOK,
+		gin.H{"message": "input file name:" + inputFile,
+			"row count:":                  len(sliceOfSourceData),
+			"Length of Base voter Slice:": len(voterBaseData),
+		})
+	// log.Printf("Length of Base voter Slice: %d\n", len(voterBaseData))
 }
 
 // Multiply the base data size by the multiplyer value passed
@@ -116,12 +120,16 @@ func resetBaseData(c *gin.Context) {
 // Sort Base dataset by voter id.
 func sortBaseData(c *gin.Context) {
 	log.Println("Sort Base Data set")
-	sort.Slice(voterBaseData, func(i, j int) bool {
-		return voterBaseData[i].VOTER_ID < voterBaseData[j].VOTER_ID
-	})
-	c.JSON(http.StatusOK, gin.H{"message": "Sort base data by voter id",
-		"data deets": fmt.Sprintf(`[low val: %d, high val: %d, len %d]`, voterBaseData[0].VOTER_ID, voterBaseData[len(voterBaseData)-1].VOTER_ID, len(voterBaseData)),
-	})
+	if len(voterBaseData) > 1 {
+		sort.Slice(voterBaseData, func(i, j int) bool {
+			return voterBaseData[i].VOTER_ID < voterBaseData[j].VOTER_ID
+		})
+		c.JSON(http.StatusOK, gin.H{"message": "Sort base data by voter id",
+			"data deets": fmt.Sprintf(`[low val: %d, high val: %d, len %d]`, voterBaseData[0].VOTER_ID, voterBaseData[len(voterBaseData)-1].VOTER_ID, len(voterBaseData)),
+		})
+	} else {
+		log.Println("Cannot sort empty voterBase")
+	}
 }
 
 // Load meta data

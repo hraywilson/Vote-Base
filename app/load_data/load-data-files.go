@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/hraywilson/Vote-Base/app/config"
@@ -13,25 +14,25 @@ import (
 // the name of a slice of struct VoterDetails passed by ref. This function
 // does not does not return a value, rather it appends directly
 // to the slice passed into the second parameter.
-func ReadDataFile(fileName string) []*config.VoterDataRecord {
-	// func ReadDataFile(fileName string, voterDataSlice []config.VoterDataRecord) {
+func ReadDataFile(dataPath, fileName string) []*config.VoterDataRecord {
 
 	// verify the file existance
-	fullFilePathName, rErr := os.Readlink(config.DataFilePath + fileName)
-	if rErr != nil {
-		log.Println(rErr)
-		return []*config.VoterDataRecord{}
-	}
+	// fullFilePathName, rErr := os.Readlink(config.DataFilePath + fileName)
+	// log.Println("ReadDataLink")
+	// log.Println(fullFilePathName)
 
-	// if can open the file determine which file type to read
-	// data files are not in a consistant format so we need
-	// to read the header to determine field order to determine
-	// how to parse the file for the data struct
+	// if rErr != nil {
+	// 	log.Println(rErr)
+	// 	return []*config.VoterDataRecord{}
+	// }
+
+	fullFilePathName := filepath.Join(dataPath, fileName)
 	fh, fErr := os.Open(fullFilePathName)
 	if fErr != nil {
 		log.Println(fErr)
 		return []*config.VoterDataRecord{}
 	}
+	log.Println(fullFilePathName)
 	defer fh.Close()
 
 	// Read the entire file into memory for processing
@@ -39,6 +40,7 @@ func ReadDataFile(fileName string) []*config.VoterDataRecord {
 	csvReader.FieldsPerRecord = -1
 	fullDataSet, dErr := csvReader.ReadAll()
 	if dErr != nil {
+
 		log.Println("cvs Reader", dErr)
 		return []*config.VoterDataRecord{}
 	}

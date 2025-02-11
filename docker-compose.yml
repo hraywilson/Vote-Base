@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  vote-base:
+    image: hraywilson/scratch-vote-base-rest-pointers:3.0.0
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /lvm_one/landing_zone/data/vote_data/colorado/docker-datapath/:/vote_data
+    ports:
+      - 8080:8080

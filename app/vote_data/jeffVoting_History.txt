@@ -1,1 +1,0 @@
-/lvm_one/landing_zone/data/vote_data/colorado/jefferson/Voter_List_12_04_2023.txt
