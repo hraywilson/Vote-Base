@@ -63,3 +63,21 @@ func SearchVoterRecordbyName(searchRecord *config.VoterDataRecord, voterBaseData
 	}
 	return voterDataSlice
 }
+
+func SearchVoterRecordbyPhoneNum(searchRecord *config.VoterDataRecord, voterBaseData []*config.VoterDataRecord) []config.VoterDataRecord {
+	voterDataSlice := []config.VoterDataRecord{}
+	// Make a shallow copy of the voterBaseData slice DataRecord{}
+	searchBaseData := voterBaseData
+	if searchRecord.LAST_NAME != "" {
+		sort.Slice(searchBaseData, func(i, j int) bool {
+			return searchBaseData[i].LAST_NAME+searchBaseData[i].FIRST_NAME+searchBaseData[i].MIDDLE_NAME < searchBaseData[j].LAST_NAME+searchBaseData[j].FIRST_NAME+searchBaseData[j].MIDDLE_NAME
+		})
+	}
+	for _, dat := range searchBaseData {
+		if dat.PHONE_NUM == searchRecord.PHONE_NUM {
+			voterDataSlice = append(voterDataSlice, *dat)
+			break
+		}
+	}
+	return voterDataSlice
+}

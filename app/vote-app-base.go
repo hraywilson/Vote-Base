@@ -40,6 +40,8 @@ func main() {
 
 	w3Service.GET("/get_voter_deets_by_name/:lastname", getVoterbyName)
 
+	w3Service.GET("/get_voter_deets_by_phone/:phonenum", getVoterbyPhone)
+
 	w3Service.GET("/load_base_data/:filename", loadDataFiles)
 
 	w3Service.GET("/multiply_base_data/:multiplyer", multiplyBaseData)
@@ -78,6 +80,14 @@ func getVoterbyName(c *gin.Context) {
 		MIDDLE_NAME: strings.ToUpper(c.Param("middlename"))}
 	log.Println("Query Base data by Voter Name", searchRecord.LAST_NAME, searchRecord.FIRST_NAME)
 	c.JSON(http.StatusOK, gin.H{"voter name: " + searchRecord.LAST_NAME + ", " + searchRecord.FIRST_NAME: voter_search.SearchVoterRecordbyName(&searchRecord, voterBaseData)})
+}
+
+// Get voter details by voter-id is a call to a recursive search function
+func getVoterbyPhone(c *gin.Context) {
+	searchRecord := config.VoterDataRecord{LAST_NAME: strings.ToUpper(c.Param("lastname")),
+		PHONE_NUM: c.Param("phonenum")}
+	log.Println("Query Base data by Voter Phone Number", searchRecord.PHONE_NUM)
+	c.JSON(http.StatusOK, gin.H{"voter name: " + searchRecord.LAST_NAME + ", " + searchRecord.FIRST_NAME: voter_search.SearchVoterRecordbyPhoneNum(&searchRecord, voterBaseData)})
 }
 
 // Load comma delimited data file passed on the url
